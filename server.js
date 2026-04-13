@@ -112,6 +112,7 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
       console.log('Webhook event type:', event.type);
       console.log('Webhook session id:', session.id);
       console.log('Webhook session metadata:', session.metadata);
+      
 
       let user = null;
 
@@ -359,7 +360,10 @@ app.post('/api/payments/create-checkout-session', async (req, res) => {
       success_url: `${appBaseUrl}/?report=${reportId}&payment=success`,
       cancel_url: `${appBaseUrl}/?report=${reportId}&payment=cancelled`
     });
+    console.log('Stripe checkout session URL:', session.url);
+    console.log('Stripe checkout session ID:', session.id);
 
+    
     await pool.query(
       `UPDATE reports
        SET stripe_checkout_session_id = $2,

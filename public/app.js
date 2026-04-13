@@ -183,7 +183,9 @@ async function startCheckout(reportId, plan) {
       window.location.href = payload.redirectUrl;
       return;
     }
-
+    console.log('Checkout payload:', payload);
+    console.log('Redirecting to:', payload.url);
+    
     window.location.href = payload.url;
   } catch (error) {
     setMessage(error.message, true);
