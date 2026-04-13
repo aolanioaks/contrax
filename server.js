@@ -361,9 +361,9 @@ app.post('/api/payments/create-checkout-session', async (req, res) => {
       cancel_url: `${appBaseUrl}/?report=${reportId}&payment=cancelled`
     });
     console.log('Stripe checkout session URL:', session.url);
-    console.log('Stripe checkout session ID:', session.id);
-
     
+
+
     await pool.query(
       `UPDATE reports
        SET stripe_checkout_session_id = $2,
