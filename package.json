@@ -1,0 +1,25 @@
+{
+  "name": "contrax-production",
+  "version": "1.0.0",
+  "description": "Production-style contract reviewer with OpenAI, PostgreSQL, and Stripe",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch server.js",
+    "start": "node server.js",
+    "db:init": "psql \"$DATABASE_URL\" -f schema.sql"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "multer": "^1.4.5-lts.1",
+    "openai": "^4.104.0",
+    "pdf-parse": "^1.1.1",
+    "pg": "^8.13.1",
+    "stripe": "^18.0.0",
+    "tesseract.js": "^5.1.1",
+    "uuid": "^11.1.0",
+    "zod": "^3.24.1"
+  }
+}

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CONTRAX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <div class="brand-wrap">
+      <span class="brand-dot">•</span>
+      <span class="brand">CONTRAX</span>
+    </div>
+    <div class="nav-links">
+      <a href="#home">Home</a>
+      <a href="#scan">Scan Contract</a>
+      <a href="#about">About</a>
+      <a href="#pricing" class="signup-btn">Sign Up</a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-inner">
+        <div class="hero-badge">AI-POWERED LEGAL ANALYSIS</div>
+        <h1>
+          Understand Any Contract<br>
+          <span>Before You Sign</span>
+        </h1>
+        <p>
+          Upload your contract and instantly see risky clauses, plain-English explanations,
+          and a risk score — no law degree required.
+        </p>
+        <div class="hero-actions">
+          <a href="#scan" class="btn btn-gold">Scan a Contract →</a>
+          <a href="#pricing" class="btn btn-outline">View Plans</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="trust-strip">
+      <div class="trust-item">🔒 Bank-level encryption</div>
+      <div class="trust-item">⚡ Results in under 30s</div>
+      <div class="trust-item">📄 PDF • Image • Text</div>
+      <div class="trust-item">🛡 Any contract type</div>
+    </section>
+
+    <section class="features-section" id="about">
+      <div class="section-label">WHAT WE ANALYZE</div>
+      <h2>Sign with confidence,<br>every time</h2>
+      <p class="section-copy">
+        From apartment leases to business vendor agreements — CONTRAX breaks down
+        complex legal language into plain English so you know exactly what you're agreeing to.
+      </p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📋</div>
+          <h3>Quick Summary</h3>
+          <p>Get a plain-language overview of the entire contract in seconds. Understand the big picture before diving into details.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🚩</div>
+          <h3>Flagged Clauses</h3>
+          <p>Risky clauses are highlighted with severity levels. See both the legal wording and what it actually means for you.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Risk Score</h3>
+          <p>A single score from 1–10 that tells you how risky the contract is overall, backed by detailed clause-level analysis.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🧾</div>
+          <h3>Business & Personal</h3>
+          <p>Works for leases, NDAs, vendor agreements, employment contracts, service agreements, and more.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="scan-section" id="scan">
+      <div class="scan-wrap">
+        <h2>Scan Your Contract</h2>
+        <p class="scan-sub">Upload a PDF, image, or paste the contract text below.</p>
+
+        <div class="scan-tabs">
+          <button class="tab active" type="button">📄 Upload PDF</button>
+          <button class="tab" type="button">🖼 Upload Image</button>
+          <button class="tab" type="button">✏️ Paste Text</button>
+        </div>
+
+        <div class="card scan-card">
+          <form id="analyze-form">
+            <div class="upload-box">
+              <div class="upload-icon">📄</div>
+              <h3>Drop your PDF here</h3>
+              <p>or click to browse your files</p>
+              <input id="file-input" type="file" name="files" accept="application/pdf,image/*" multiple />
+            </div>
+
+            <div class="text-divider">or</div>
+
+            <label class="label" for="contract-text">Paste contract text</label>
+            <textarea id="contract-text" name="contractText" placeholder="Paste contract text here..."></textarea>
+
+            <button class="btn btn-navy scan-submit" type="submit">Scan Contract</button>
+          </form>
+
+          <div id="form-message" class="message hidden"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pricing-section" id="pricing">
+      <div class="pricing-inner">
+        <div class="section-label">PRICING</div>
+        <h2>Simple, transparent pricing</h2>
+        <p class="pricing-copy">Start free. Unlock the full picture when you need it.</p>
+
+        <div class="pricing-grid">
+          <div class="pricing-card pricing-dark">
+            <div class="pricing-tag">FREE SCAN</div>
+            <div class="price">$0</div>
+            <div class="price-sub">always free</div>
+            <ul>
+              <li>✓ Quick contract summary</li>
+              <li>✓ Risk summary (top 2)</li>
+              <li>🔒 Clause-by-clause breakdown</li>
+              <li>🔒 Plain-English explanations</li>
+              <li>🔒 Risk score (1–10)</li>
+              <li>🔒 Downloadable report</li>
+            </ul>
+            <a href="#scan" class="btn btn-outline-light full-width">Start Free Scan</a>
+          </div>
+
+          <div class="pricing-card pricing-light">
+            <div class="pricing-tag gold">★ FULL REPORT</div>
+            <div class="price">$5</div>
+            <div class="price-sub">per contract • or $8/mo unlimited</div>
+            <ul>
+              <li>✓ Quick contract summary</li>
+              <li>✓ Full risk summary</li>
+              <li>✓ Clause-by-clause breakdown</li>
+              <li>✓ Plain-English explanations</li>
+              <li>✓ Risk score (1–10)</li>
+              <li>✓ Downloadable PDF report</li>
+            </ul>
+            <a href="#scan" class="btn btn-gold full-width">Get Full Access</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="results" class="results hidden"></section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
