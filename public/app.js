@@ -4,19 +4,22 @@ const textInput = document.getElementById('contract-text');
 const messageBox = document.getElementById('form-message');
 const results = document.getElementById('results');
 
+const scanTabs = document.getElementById('scan-tabs');
+const uploadBox = document.getElementById('upload-box');
+const uploadTitle = document.getElementById('upload-title');
+const uploadSubtext = document.getElementById('upload-subtext');
+const pasteSection = document.getElementById('paste-section');
+
+let loadingIntervals = [];
+
+setupScanModeButtons();
+setupUploadBox();
+
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   setMessage('Analyzing contract... this can take a moment for OCR or long PDFs.');
 
-  results.innerHTML = `
-    <section class="card analysis-loading">
-      <div style="text-align:center; padding: 48px 20px;">
-        <div style="font-size:48px; margin-bottom:16px;">⏳</div>
-        <h2 style="color:white;">Analyzing your contract</h2>
-        <p style="color:#d7e2ea;">This usually takes 15–30 seconds</p>
-      </div>
-    </section>
-  `;
+  renderLoadingState();
   results.classList.remove('hidden');
   scrollToResults();
 
@@ -33,6 +36,8 @@ form.addEventListener('submit', async (event) => {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'Analysis failed.');
 
+    stopLoadingAnimations();
+
     const params = new URLSearchParams(window.location.search);
     params.set('report', data.reportId);
     history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
@@ -40,6 +45,7 @@ form.addEventListener('submit', async (event) => {
     renderFreeResult(data.reportId, data.freeResult, data.fileName, data.sourceType);
     clearMessage();
   } catch (error) {
+    stopLoadingAnimations();
     setMessage(error.message, true);
     results.classList.add('hidden');
   }
@@ -54,6 +60,7 @@ window.addEventListener('load', async () => {
 
   if (payment === 'success') {
     setMessage('Payment received. Unlocking your report...');
+    renderLoadingState('payment');
     await pollForUnlock(reportId);
     return;
   }
@@ -92,6 +99,7 @@ async function pollForUnlock(reportId) {
     const data = await response.json();
 
     if (response.ok && data.unlocked) {
+      stopLoadingAnimations();
       renderFullResult(data);
       clearMessage();
       return;
@@ -100,7 +108,73 @@ async function pollForUnlock(reportId) {
     await new Promise((resolve) => setTimeout(resolve, 2000));
   }
 
+  stopLoadingAnimations();
   setMessage('Payment succeeded, but the webhook has not unlocked the report yet. Refresh in a few seconds.', true);
+}
+
+function renderLoadingState(mode = 'analysis') {
+  const steps = mode === 'payment'
+    ? [
+        { id: 'step-1', icon: '💳', text: 'Confirming your payment', active: true },
+        { id: 'step-2', icon: '🔓', text: 'Unlocking the full report', active: false },
+        { id: 'step-3', icon: '📄', text: 'Preparing your analysis', active: false }
+      ]
+    : [
+        { id: 'step-1', icon: '📄', text: 'Uploading the contract', active: true },
+        { id: 'step-2', icon: '🔎', text: 'Analyzing risky clauses', active: false },
+        { id: 'step-3', icon: '📊', text: 'Scoring the contract', active: false },
+        { id: 'step-4', icon: '🧠', text: 'Generating your summary', active: false }
+      ];
+
+  results.innerHTML = `
+    <section class="card analysis-loading">
+      <div class="loading-shell">
+        <div class="loading-spinner"></div>
+        <h2 class="loading-title">${mode === 'payment' ? 'Unlocking your report' : 'Analyzing your contract'}</h2>
+        <p class="loading-copy">
+          ${mode === 'payment'
+            ? 'Please wait while we confirm payment and unlock the full report.'
+            : 'This usually takes 15–30 seconds depending on file size and format.'}
+        </p>
+
+        <div class="loading-steps">
+          ${steps.map(step => `
+            <div class="loading-step ${step.active ? 'active' : ''}" id="${step.id}">
+              <span class="loading-step-icon">${step.icon}</span>
+              <span>${step.text}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </section>
+  `;
+
+  startLoadingAnimations(mode);
+}
+
+function startLoadingAnimations(mode) {
+  stopLoadingAnimations();
+
+  const ids = mode === 'payment'
+    ? ['step-1', 'step-2', 'step-3']
+    : ['step-1', 'step-2', 'step-3', 'step-4'];
+
+  let index = 0;
+
+  const interval = setInterval(() => {
+    ids.forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('active', i === index);
+    });
+    index = (index + 1) % ids.length;
+  }, 1200);
+
+  loadingIntervals.push(interval);
+}
+
+function stopLoadingAnimations() {
+  loadingIntervals.forEach(clearInterval);
+  loadingIntervals = [];
 }
 
 function renderFreeResult(reportId, data, fileName, sourceType) {
@@ -129,16 +203,30 @@ function renderFreeResult(reportId, data, fileName, sourceType) {
         `).join('') || '<p>No clauses were flagged in the free scan.</p>'}
       </div>
 
-      <div class="card unlock-box">
-        <h2>Unlock Full Report</h2>
-        <p>Get the full numeric score, all flagged clauses, suggested revisions, and the full contract text.</p>
+      <div class="card unlock-box unlock-cta-box">
+        <div class="unlock-pill">Next step</div>
+        <h2>Unlock the full report</h2>
+        <p class="unlock-lead">
+          You already have the free summary. To continue, enter your email below and choose either the one-time report or the monthly plan.
+        </p>
+
+        <div class="unlock-benefits">
+          <div>✓ Full clause-by-clause breakdown</div>
+          <div>✓ Plain-English explanations</div>
+          <div>✓ Full risk score</div>
+          <div>✓ Downloadable report</div>
+        </div>
 
         <label class="label">Email for receipt</label>
         <input id="customer-email" type="email" placeholder="you@example.com" />
 
-        <div class="inline-row" style="margin-top: 16px;">
+        <div class="inline-row unlock-actions" style="margin-top: 16px;">
           <button class="btn btn-gold" id="pay-once-btn" type="button">Pay $5 / Contract</button>
           <button class="btn btn-outline-light" id="subscribe-btn" type="button">Subscribe $8 / Month</button>
+        </div>
+
+        <div class="unlock-helper">
+          Enter your email, then choose one of the options above to continue.
         </div>
       </div>
     </section>
@@ -160,10 +248,26 @@ function renderFreeResult(reportId, data, fileName, sourceType) {
   });
 
   scrollToResults();
+  pulseUnlockBox();
+}
+
+function pulseUnlockBox() {
+  const box = document.querySelector('.unlock-cta-box');
+  if (!box) return;
+
+  box.classList.add('pulse-focus');
+  setTimeout(() => box.classList.remove('pulse-focus'), 2200);
 }
 
 async function startCheckout(reportId, plan) {
   const customerEmail = document.getElementById('customer-email')?.value.trim() || '';
+
+  if (!customerEmail) {
+    setMessage('Please enter your email before continuing.', true);
+    document.getElementById('customer-email')?.focus();
+    return;
+  }
+
   setMessage('Creating Stripe checkout...');
 
   try {
@@ -183,9 +287,10 @@ async function startCheckout(reportId, plan) {
       window.location.href = payload.redirectUrl;
       return;
     }
+
     console.log('Checkout payload:', payload);
     console.log('Redirecting to:', payload.url);
-    
+
     window.location.href = payload.url;
   } catch (error) {
     setMessage(error.message, true);
@@ -251,6 +356,58 @@ function renderFullResult(data) {
   });
 
   scrollToResults();
+}
+
+function setupScanModeButtons() {
+  if (!scanTabs) return;
+
+  scanTabs.addEventListener('click', (event) => {
+    const tab = event.target.closest('.tab');
+    if (!tab) return;
+
+    document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
+    tab.classList.add('active');
+
+    const mode = tab.dataset.mode;
+
+    if (mode === 'text') {
+      pasteSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => textInput.focus(), 350);
+      uploadTitle.textContent = 'Upload a contract file';
+      uploadSubtext.textContent = 'or scroll down to paste your contract text';
+      return;
+    }
+
+    if (mode === 'image') {
+      uploadTitle.textContent = 'Drop your images here';
+      uploadSubtext.textContent = 'or click to browse image files';
+      uploadBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => fileInput.click(), 250);
+      return;
+    }
+
+    uploadTitle.textContent = 'Drop your PDF here';
+    uploadSubtext.textContent = 'or click to browse your files';
+    uploadBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => fileInput.click(), 250);
+  });
+}
+
+function setupUploadBox() {
+  if (!uploadBox) return;
+
+  uploadBox.addEventListener('click', (event) => {
+    if (event.target !== fileInput) {
+      fileInput.click();
+    }
+  });
+
+  uploadBox.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      fileInput.click();
+    }
+  });
 }
 
 function downloadReport(data) {

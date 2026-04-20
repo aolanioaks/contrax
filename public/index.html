@@ -14,7 +14,7 @@
         t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "wb480kfd39");
-</script>
+  </script>
 </head>
 <body>
   <nav class="navbar">
@@ -93,25 +93,28 @@
         <h2>Scan Your Contract</h2>
         <p class="scan-sub">Upload a PDF, image, or paste the contract text below.</p>
 
-        <div class="scan-tabs">
-          <button class="tab active" type="button">📄 Upload PDF</button>
-          <button class="tab" type="button">🖼 Upload Image</button>
-          <button class="tab" type="button">✏️ Paste Text</button>
+        <div class="scan-tabs" id="scan-tabs">
+          <button class="tab active" type="button" data-mode="pdf">📄 Upload PDF</button>
+          <button class="tab" type="button" data-mode="image">🖼 Upload Image</button>
+          <button class="tab" type="button" data-mode="text">✏️ Paste Text</button>
         </div>
 
         <div class="card scan-card">
           <form id="analyze-form">
-            <div class="upload-box">
+            <div class="upload-box" id="upload-box" tabindex="0" role="button" aria-label="Upload contract">
               <div class="upload-icon">📄</div>
-              <h3>Drop your PDF here</h3>
-              <p>or click to browse your files</p>
+              <h3 id="upload-title">Drop your PDF here</h3>
+              <p id="upload-subtext">or click to browse your files</p>
               <input id="file-input" type="file" name="files" accept="application/pdf,image/*" multiple />
             </div>
 
             <div class="text-divider">or</div>
 
-            <label class="label" for="contract-text">Paste contract text</label>
-            <textarea id="contract-text" name="contractText" placeholder="Paste contract text here..."></textarea>
+            <div id="paste-section">
+              <label class="label" for="contract-text">Paste contract text</label>
+              <textarea id="contract-text" name="contractText" placeholder="Paste contract text here..."></textarea>
+              <div class="helper-text">Tip: Use this if your contract is in an email, copied from a document, or not saved as a file yet.</div>
+            </div>
 
             <button class="btn btn-navy scan-submit" type="submit">Scan Contract</button>
           </form>
